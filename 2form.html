@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<base target="_top">
+<style>
+body {
+font-family: Arial, sans-serif;
+max-width: 400px;
+margin: 30px auto;
+padding: 20px;
+background: #f9f9f9;
+border-radius: 8px;
+box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+h2 {
+text-align: center;
+}
+label {
+display: block;
+margin-top: 15px;
+font-weight: bold;
+}
+input, select, button {
+width: 100%;
+padding: 10px;
+margin-top: 5px;
+border: 1px solid #ccc;
+border-radius: 4px;
+font-size: 16px;
+}
+#processing {
+display: none;
+text-align: center;
+margin-top: 20px;
+font-style: italic;
+}
+#result {
+text-align: center;
+margin-top: 20px;
+font-weight: bold;
+}
+</style>
+</head>
+<body>
+<h2>Time Clock/Marcador de Hora</h2>
+<form id="timeForm">
+<label for="name">Name/ Nombre:</label>
+<input type="text" id="name" name="name" required>
+
+<label for="action">Action/ Accion:</label>
+<select id="action" name="action" required>
+<option value="Clock In">Clock In/ Entrar</option>
+<option value="Start Lunch">Start Lunch/ Comenzar Almuerzo</option>
+<option value="End Lunch">End Lunch/ Terminar Almuerzo</option>
+<option value="Clock Out">Clock Out/ Salir</option>
+</select>
+
+<label for="pin">PIN:</label>
+<input type="password" id="pin" name="pin" required>
+
+<button type="submit">Submit</button>
+</form>
+
+<div id="processing">⏳ Processing/Processando</div>
+<div id="result"></div>
+
+<script>
+document.getElementById("timeForm").addEventListener("submit", function(e) {
+e.preventDefault();
+document.getElementById("processing").style.display = "block";
+document.getElementById("result").textContent = "";
+
+const formData = {
+name: document.getElementById("name").value,
+action: document.getElementById("action").value,
+pin: document.getElementById("pin").value
+};
+
+google.script.run.withSuccessHandler(function(response) {
+document.getElementById("processing").style.display = "none";
+if (response.success) {
+document.getElementById("result").innerHTML =
+response.message + "<br>Confirmation Code/ Codigo de Confirmacion: <strong>" + response.code + "</strong>";
+} else {
+document.getElementById("result").textContent = response.message;
+}
+document.getElementById("timeForm").reset();
+}).processSubmission(formData);
+});
+</script>
+
+
+</body>
+</html>
